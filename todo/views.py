@@ -8,6 +8,8 @@ from django.db import IntegrityError
 
 from django.contrib.auth import login, logout, authenticate
 
+from .forms import TodoForm
+
 def home(request):
     return render(request, 'todo/home.html')
 
@@ -49,6 +51,23 @@ def logoutuser(request):
     if request.method == 'POST':
         logout(request)
         return redirect('home')
+
+def createtodo(request):
+    if request.method == 'GET':
+        return render(request, 'todo/createtodo.html', {'form':TodoForm()})
+    else:
+        try:
+            form = TodoForm(request.POST)
+            # this kees it from saving it into the database
+            newtodo = form.save(commit=False)
+            # we dont want other users making todos for other users
+            newtodo.user = request.user
+            # this will put it it into the data base
+            newtodo.save()
+            # redirect back to home page where they can see there todo
+            return redirect('currenttodos')
+        except ValueError:
+            return render(request, 'todo/createtodo.html', {'form':TodoForm(), 'error':'Bad Data'})
 
 
 def currenttodos(request):
