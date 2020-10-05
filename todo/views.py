@@ -6,7 +6,11 @@ from django.contrib.auth.models import User
 # for IntegrityError
 from django.db import IntegrityError
 
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
+
+def home(request):
+    return render(request, 'todo/home.html')
+
 
 def signupuser(request):
     if request.method == 'GET':
@@ -25,6 +29,11 @@ def signupuser(request):
         else:
             # Tell user the password didnt match
             return render(request, 'todo/signupuser.html', {'form':UserCreationForm(), 'error': 'Passwords did not match'})
+
+def logoutuser(request):
+    if request.method == 'POST':
+        logout(request)
+        return redirect('home')
 
 
 def currenttodos(request):
