@@ -10,6 +10,8 @@ from django.contrib.auth import login, logout, authenticate
 
 from .forms import TodoForm
 
+from .models import Todo
+
 def home(request):
     return render(request, 'todo/home.html')
 
@@ -71,4 +73,6 @@ def createtodo(request):
 
 
 def currenttodos(request):
-    return render(request, 'todo/currenttodos.html')
+    # This returns the objects request by the user instead of showing all of the objects ex. all()
+    todos = Todo.objects.filter(user=request.user, datecompleted__isnull=True)
+    return render(request, 'todo/currenttodos.html', {'todos':todos})
